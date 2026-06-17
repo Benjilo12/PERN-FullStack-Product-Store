@@ -27,20 +27,19 @@ app.use(helmet());
 app.use(morgan("dev"));
 
 //apply arcjet rate-limit to all routes
-app.use(async (req, resizeBy, next) => {
+app.use(async (req, res, next) => {
   try {
     const decision = await aj.protect(req, { requested: 1 });
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
-        res.status(429).json({
+        return res.status(429).json({
           error: "Too Many Request",
         });
       } else if (decision.reason.isBot()) {
-        res.status(403).json({ error: "Bot access denied" });
+        return res.status(403).json({ error: "Bot access denied" });
       } else {
-        res.status(403).json({ error: "Forbidden" });
+        return res.status(403).json({ error: "Forbidden" });
       }
-      return;
     }
     // check for spoofed bots
     if (
@@ -48,8 +47,7 @@ app.use(async (req, resizeBy, next) => {
         (result) => result.reason.isBot() && result.reason.isSpoofed(),
       )
     ) {
-      res.status(403).json({ error: "Spoofed bot detected" });
-      return;
+      return res.status(403).json({ error: "Spoofed bot detected" });
     }
     next();
   } catch (error) {
