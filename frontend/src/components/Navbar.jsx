@@ -1,7 +1,47 @@
+import { Link, useResolvedPath } from "react-router-dom";
+import { ShoppingCartIcon } from "lucide-react";
+import ThemeSelector from "./ThemeSelector";
+
 function Navbar() {
+  const { pathname } = useResolvedPath();
+  // Double-check fix: React Router pathname defaults to "/" for home page
+  const isHomePage = pathname === "/";
+
   return (
-    <div>
-      <h1>Navbar</h1>
+    <div className="bg-base-100/80 backdrop-blur-lg border-b border-base-content/10 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto">
+        {/* Added items-center to make sure your logo and theme/cart line up perfectly */}
+        <div className="navbar px-4 min-h-16 justify-between items-center flex">
+          {/* LOGO (Removed flex-1 to stop it from breaking layout spacing) */}
+          <div className="flex-none">
+            <Link to="/" className="hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-2">
+                <ShoppingCartIcon className="size-9 text-orange-500" />
+                <span className="font-semibold font-mono tracking-widest text-2xl bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">
+                  PRIMEMART
+                </span>
+              </div>
+            </Link>
+          </div>
+
+          {/* RIGHT SECTION */}
+          <div className="flex items-center gap-4 flex-none">
+            <ThemeSelector />
+
+            {isHomePage && (
+              <div className="indicator">
+                {/* Fixed "p-z" typo to "p-2" for proper spatial padding */}
+                <div className="p-2 rounded-full hover:bg-base-200 transition-colors relative">
+                  <ShoppingCartIcon className="size-5" />
+                  <span className="badge badge-sm badge-primary indicator-item absolute top-0 right-0">
+                    8
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
