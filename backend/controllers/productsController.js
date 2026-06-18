@@ -69,8 +69,14 @@ export const getProduct = async (req, res) => {
     const product = await sql`
     SELECT * FROM products WHERE id=${id}`;
 
-    // Return the found product (Note: should check if product exists first)
-    res.status(200).json({ success: true, data: product });
+    if (product.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    // Return the found product as a single object for the edit page.
+    res.status(200).json({ success: true, data: product[0] });
   } catch (error) {
     console.log("Error in getProduct", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });

@@ -123,7 +123,7 @@ function AddProductModal() {
       </div>
 
       {/* BACKDROP */}
-      <form method="dialog" className="modal-backdrop">
+      <form method="dialog" className="modal-backdrop bg-black/50">
         {/* Click outside to close the modal. */}
         <button>close</button>
       </form>
