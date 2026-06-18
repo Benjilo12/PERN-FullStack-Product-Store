@@ -82,9 +82,12 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await axios.get(`${BASE_URL}/api/products/${id}`);
+      const product = Array.isArray(response.data.data)
+        ? response.data.data[0]
+        : response.data.data;
       set({
-        currentProduct: response.data.data,
-        formData: response.data.data, // pre-fill form with current product data
+        currentProduct: product,
+        formData: product, // pre-fill form with current product data
         error: null,
       });
     } catch (error) {
