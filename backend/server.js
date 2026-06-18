@@ -7,11 +7,13 @@ import dotenv from "dotenv";
 import productRoutes from "./routes/productRoutes.js";
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
+import path from "path";
 
 dotenv.config();
 //? Initialize Express app and set the port from environment or default to 8000
 const app = express();
 const PORT = process.env.PORT || 8000;
+const __dirname = path.resolve();
 
 //* ========== MIDDLEWARE SETUP ==========
 //? Parse incoming JSON request bodies
@@ -21,7 +23,11 @@ app.use(express.json());
 app.use(cors());
 
 //? Helmet is a security middleware that protects the app by setting various HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    dontentSecurityPolicy: false,
+  }),
+);
 
 //? Morgan logs HTTP requests to the console in development mode
 app.use(morgan("dev"));
@@ -58,6 +64,16 @@ app.use(async (req, res, next) => {
 //* ========== ROUTES ==========
 //? Root route - returns a simple greeting message
 app.use("/api/products", productRoutes);
+
+//!for production after building the app
+if (process.env.NODE_ENV === "production") {
+  //server our react app
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  });
+}
 
 //* ========== DATABASE CONNECTION ==========
 //?Store text (words), up to 255 characters long.”
