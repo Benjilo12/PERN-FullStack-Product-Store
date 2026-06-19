@@ -25,7 +25,12 @@ app.use(cors());
 //? Helmet is a security middleware that protects the app by setting various HTTP headers
 app.use(
   helmet({
-    dontentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
   }),
 );
 
